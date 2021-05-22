@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="94b28f36-4a65-4739-93cf-1ce7db1bdbf7" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="lookupfuncFlow" doc:id="25ac82cb-0818-4c5c-bd21-2750651a2a7e" >
+		<http:listener doc:name="Listener" doc:id="5e51f05e-6947-464d-a2a1-5283b9780fa0" config-ref="HTTP_Listener_config" path="lookup"/>
+		<set-payload value='#["hello muleys"]' doc:name="Set Payload" doc:id="adeeb6f0-88c5-4e65-b79e-000549683cc1" />
+		<set-variable value='#[output application/json&#10;---&#10;{&#10;	message: lookup("lookupfuncFlow1",payload,5000),&#10;	status: "success"&#10;}]' doc:name="Set Variable" doc:id="fd608c3f-45ed-4f17-a1b2-caf7742d9bb7" variableName="myvar"/>
+		<set-payload value="#[vars.myvar]" doc:name="Set Payload" doc:id="032b8e7f-ce02-44b5-a179-98c3d0ab8343" />
+	</flow>
+	<flow name="lookupfuncFlow1" doc:id="ca60daf7-40de-4927-af71-283ef1478829" >
+		<ee:transform doc:name="Transform Message" doc:id="0688136b-ee3a-413e-a295-e43d8acf7d5e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload ++ "how are you!"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
